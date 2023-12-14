@@ -3,6 +3,7 @@ package org.jetbrains.bsp.bazel.server.sync.languages
 import org.jetbrains.bsp.bazel.info.BspTargetInfo
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.cpp.CppModule
+import org.jetbrains.bsp.bazel.server.sync.languages.go.GoLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.java.JavaLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.kotlin.KotlinLanguagePlugin
 import org.jetbrains.bsp.bazel.server.sync.languages.python.PythonLanguagePlugin
@@ -13,12 +14,13 @@ import org.jetbrains.bsp.bazel.server.sync.model.Language
 import org.jetbrains.bsp.bazel.server.sync.model.Module
 
 class LanguagePluginsService(
-    val scalaLanguagePlugin: ScalaLanguagePlugin,
-    val javaLanguagePlugin: JavaLanguagePlugin,
-    val cppLanguagePlugin: CppLanguagePlugin,
-    val kotlinLanguagePlugin: KotlinLanguagePlugin,
-    private val thriftLanguagePlugin: ThriftLanguagePlugin,
-    val pythonLanguagePlugin: PythonLanguagePlugin
+  val scalaLanguagePlugin: ScalaLanguagePlugin,
+  val javaLanguagePlugin: JavaLanguagePlugin,
+  val cppLanguagePlugin: CppLanguagePlugin,
+  val kotlinLanguagePlugin: KotlinLanguagePlugin,
+  private val thriftLanguagePlugin: ThriftLanguagePlugin,
+  val pythonLanguagePlugin: PythonLanguagePlugin,
+  val goLanguagePlugin: GoLanguagePlugin,
 ) {
     private val emptyLanguagePlugin: EmptyLanguagePlugin = EmptyLanguagePlugin()
 
@@ -28,6 +30,7 @@ class LanguagePluginsService(
         cppLanguagePlugin.prepareSync(targetInfos)
         thriftLanguagePlugin.prepareSync(targetInfos)
         pythonLanguagePlugin.prepareSync(targetInfos)
+        goLanguagePlugin.prepareSync(targetInfos)
     }
 
     fun getPlugin(languages: Set<Language>): LanguagePlugin<*> =
@@ -38,6 +41,7 @@ class LanguagePluginsService(
             languages.contains(Language.CPP) -> cppLanguagePlugin
             languages.contains(Language.THRIFT) -> thriftLanguagePlugin
             languages.contains(Language.PYTHON) -> pythonLanguagePlugin
+            languages.contains(Language.GO) -> goLanguagePlugin
             else -> emptyLanguagePlugin
         }
 
