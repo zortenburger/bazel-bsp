@@ -21,8 +21,10 @@ abstract class BazelBspTestBaseScenario {
     protected val testClient: BazelTestClient
 
     init {
+        log.info("XDDDDDDDDDDD - -- - - - -- - - -- ${workspaceDir}")
         installServer()
         testClient = createClient()
+        log.info("XDDDDDDDDDDD - -- - - - -- - - -- ${testClient.gson.toJson(testClient.initializeParams)}")
     }
 
     // check: https://github.com/bazelbuild/intellij/blob/adb358670a7fc6ad51808486dc03f4605f83dcd3/aspect/testing/tests/src/com/google/idea/blaze/aspect/integration/BazelInvokingIntegrationTestRunner.java#L132
