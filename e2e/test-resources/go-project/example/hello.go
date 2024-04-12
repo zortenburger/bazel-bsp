@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
+import (
+    "example.com/lib"
+    "fmt"
+)
 
 func main() {
-    fmt.Println("hello world")
+    fmt.Println(lib.SayHello())
 }
