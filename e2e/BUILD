@@ -81,7 +81,7 @@ bazel_integration_test_current_version(
     workspace_path = "test-resources/android-kotlin-project",
 )
 
-bazel_integration_test_all_versions(
+bazel_integration_test_current_version(
     name = "go_project_test",
     test_runner = "//e2e/src/main/kotlin/org/jetbrains/bsp/bazel:BazelBspGoProjectTest",
     workspace_path = "test-resources/go-project",

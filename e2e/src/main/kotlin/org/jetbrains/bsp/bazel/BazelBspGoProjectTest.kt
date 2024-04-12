@@ -11,6 +11,7 @@ import kotlin.time.Duration.Companion.minutes
 import java.net.URI
 
 object BazelBspGoProjectTest : BazelBspTestBaseScenario() {
+  private val testClient = createTestkitClient()
 
   val defaultSdkHomePath = URI("file://\$BAZEL_OUTPUT_BASE_PATH/external/go_sdk/")
 
