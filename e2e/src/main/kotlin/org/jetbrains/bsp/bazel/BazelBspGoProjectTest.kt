@@ -38,72 +38,67 @@ object BazelBspGoProjectTest : BazelBspTestBaseScenario() {
       )
     }
 
-  private fun exampleBuildTarget(): BuildTarget {
-    val exampleGoBuildTarget = GoBuildTarget(
-      sdkHomePath = defaultSdkHomePath,
-      importPath = "",
+  private fun exampleBuildTarget(): BuildTarget =
+    createGoBuildTarget(
+      targetDirectory = "example",
+      targetName = "hello",
+      tags = listOf("application"),
+      capabilities = BuildTargetCapabilities().also {
+        it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true
+      },
+      dependencies = listOf(
+        BuildTargetIdentifier("$targetPrefix//lib:go_default_library")
+      )
     )
 
-    val exampleBuildTargetData = BuildTarget(
-      BuildTargetIdentifier("$targetPrefix//example:hello"),
-      listOf("application"),
-      listOf("go"),
-      listOf(),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = true; it.canDebug = true }
-    )
-
-    exampleBuildTargetData.displayName = "$targetPrefix//example:hello"
-    exampleBuildTargetData.baseDirectory = "file://\$WORKSPACE/example/"
-    exampleBuildTargetData.data = exampleGoBuildTarget
-    exampleBuildTargetData.dataKind = "go"
-    exampleBuildTargetData.dependencies = listOf(
-      BuildTargetIdentifier("$targetPrefix//lib:go_default_library")
-    )
-
-    return exampleBuildTargetData
-  }
-
-  private fun libBuildTarget(): BuildTarget {
-    val libGoBuildTarget = GoBuildTarget(
-      sdkHomePath = defaultSdkHomePath,
+  private fun libBuildTarget(): BuildTarget =
+    createGoBuildTarget(
+      targetDirectory = "lib",
+      targetName = "go_default_library",
+      tags = listOf("library"),
+      capabilities = BuildTargetCapabilities().also {
+        it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false
+      },
       importPath = "example.com/lib",
     )
 
-    val libBuildTargetData = BuildTarget(
-      BuildTargetIdentifier("$targetPrefix//lib:go_default_library"),
-      listOf("library"),
+  private fun libTestBuildTarget(): BuildTarget =
+    createGoBuildTarget(
+      targetDirectory = "lib",
+      targetName = "go_default_test",
+      tags = listOf("test"),
+      capabilities = BuildTargetCapabilities().also {
+        it.canCompile = true; it.canTest = true; it.canRun = false; it.canDebug = true
+      }
+    )
+
+  private fun createGoBuildTarget(
+    targetDirectory: String,
+    targetName: String,
+    tags: List<String>,
+    capabilities: BuildTargetCapabilities,
+    importPath: String = "",
+    sdkHomePath: URI = defaultSdkHomePath,
+    dependencies: List<BuildTargetIdentifier> = listOf(),
+  ): BuildTarget {
+    val goBuildTarget = GoBuildTarget(
+      sdkHomePath = sdkHomePath,
+      importPath = importPath,
+    )
+
+    val buildTargetData = BuildTarget(
+      BuildTargetIdentifier("$targetPrefix//$targetDirectory:$targetName"),
+      tags,
       listOf("go"),
-      listOf(),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = false; it.canRun = false; it.canDebug = false }
+      dependencies,
+      capabilities
     )
 
-    libBuildTargetData.displayName = "$targetPrefix//lib:go_default_library"
-    libBuildTargetData.baseDirectory = "file://\$WORKSPACE/lib/"
-    libBuildTargetData.data = libGoBuildTarget
-    libBuildTargetData.dataKind = "go"
+    buildTargetData.displayName = "$targetPrefix//$targetDirectory:$targetName"
+    buildTargetData.baseDirectory = "file://\$WORKSPACE/$targetDirectory/"
+    buildTargetData.data = goBuildTarget
+    buildTargetData.dataKind = "go"
 
-    return libBuildTargetData
-  }
-
-  private fun libTestBuildTarget(): BuildTarget {
-    val libTestGoBuildTarget = GoBuildTarget(
-      sdkHomePath = defaultSdkHomePath,
-      importPath = "",
-    )
-
-    val libTestBuildTargetData = BuildTarget(
-      BuildTargetIdentifier("$targetPrefix//lib:go_default_test"),
-      listOf("test"),
-      listOf("go"),
-      listOf(),
-      BuildTargetCapabilities().also { it.canCompile = true; it.canTest = true; it.canRun = false; it.canDebug = true }
-    )
-
-    libTestBuildTargetData.displayName = "$targetPrefix//lib:go_default_test"
-    libTestBuildTargetData.baseDirectory = "file://\$WORKSPACE/lib/"
-    libTestBuildTargetData.data = libTestGoBuildTarget
-    libTestBuildTargetData.dataKind = "go"
-
-    return libTestBuildTargetData
+    return buildTargetData
   }
 }
